@@ -159,6 +159,7 @@ class MultiUserJoinDialog {
 
             let i=0;
             for (;i<results.length;i++) {
+
                 if (results[i] && results[i].domain)
                 {
                     this.serverInputList.append('<option>'+results[i].domain+'</option>');
