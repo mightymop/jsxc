@@ -2,6 +2,7 @@ import showContactDialog from './dialogs/contact'
 import showAboutDialog from './dialogs/about'
 import showMultiUserJoinDialog from './dialogs/multiUserJoin'
 import showSettingsDialog from './dialogs/settings'
+import showSetPEPAvatarDialog from './dialogs/pepavatar'
 import * as CONST from '../CONST'
 import RosterItem from './RosterItem'
 import Menu from './util/Menu'
@@ -354,6 +355,12 @@ export default class Roster {
          offlineAvailable: true,
          icon: 'gear'
       });
+
+      this.addMenuEntry({
+         id: 'set-pepavatar',
+         handler: showSetPEPAvatarDialog,
+         label: Translation.t('Add_PEPAvatar'),
+      });
    }
 
    private registerPresenceHandler() {
@@ -461,5 +468,7 @@ export default class Roster {
       Client.getPresenceController().registerCurrentPresenceHook(() => {
          this.refreshOwnPresenceIndicator();
       });
+
+      $('.jsxc-bottom > .jsxc-avatar').on('click',showSetPEPAvatarDialog);
    }
 }

@@ -62,7 +62,7 @@ export let avatarPlaceholder: (element: JQuery, name: string, color: string, jid
       'font-size': '22px', //element.height() * 0.6 + 'px'
    });
 
-   element.text(text[0].toUpperCase());
+   element.text(text.length>0?text[0].toUpperCase():'');
 });
 
 export interface IRTCPeerConfig {

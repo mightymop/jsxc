@@ -10,6 +10,42 @@
   z-index: 999;
 }
 
+.jsxc-circle-avatar-text {
+  display: block;
+  left: -25px;
+  min-height: 20px;
+  position: relative;
+  text-align: center;
+  top: 100px;
+  width: 100px;
+  z-index: 100;
+}
+
+.jsxc-circle-position-header {
+  margin-bottom: 75px !important;
+  margin-left: 100px;
+}
+
+.jsxc-circle-left-avatar {
+  border-radius: 50%;
+  clip: rect(0, 50px, 200px, 0);
+  height: 100px;
+  left: 30px;
+  overflow: hidden;
+  position: absolute;
+  width: 100px;
+}
+
+.jsxc-circle-right-avatar {
+  border-radius: 50%;
+  clip: rect(0, 100px, 100px, 50px);
+  height: 100px;
+  left: 30px;
+  overflow: hidden;
+  position: absolute;
+  width: 100px;
+}
+
 .jsxc-dialog {
   background: $main-bg;
   border: 1px solid $bg-darker;
