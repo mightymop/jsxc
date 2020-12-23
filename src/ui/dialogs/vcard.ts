@@ -53,7 +53,9 @@ export default function(contact: IContact) {
    }
 
    contact.getVcard()
-      .then(vcardSuccessCallback)
+      .then(function(vcardData){
+          return Promise.resolve(vcardSuccessCallback(vcardData,contact));
+      })
       .then(function(vcardData) {
          let content = vcardBodyTemplate({
             properties: vcardData
@@ -66,7 +68,7 @@ export default function(contact: IContact) {
       .catch(vcardErrorCallback);
 }
 
-function vcardSuccessCallback(vCardData): Promise<any> {
+function vcardSuccessCallback(vCardData,contact){
    let dialogElement = dialog.getDom();
 
    if (vCardData.PHOTO) {
@@ -79,13 +81,49 @@ function vcardSuccessCallback(vCardData): Promise<any> {
 
    let numberOfProperties = Object.keys(vCardData).length;
 
-   if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
-      return Promise.reject({});
+   let disabledPlugins = contact.getAccount().getOption('disabledPlugins') || [];
+
+   if (disabledPlugins.indexOf('pep-avatars')>=0)
+   {
+      if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
+           return Promise.reject({});
+      }
+
+      delete vCardData.PHOTO;
+
+      return convertToTemplateData(vCardData);
    }
 
-   delete vCardData.PHOTO;
+   return new Promise(function(resolve, reject) {
+       contact.getAvatar().then(avatar => {
 
-   return Promise.resolve(convertToTemplateData(vCardData));
+         if ($(dialogElement).find('.jsxc-avatar').length===0)
+         {
+             let imageElement = $('<div>');
+             imageElement.addClass('jsxc-avatar jsxc-vcard');
+             imageElement.css('background-image', `url(${avatar.getData()})`);
+             dialogElement.find('h3').before(imageElement);
+         }
+         else
+         {
+             let avatarelement = $(dialogElement).find('.jsxc-avatar');
+             avatarelement.css('background-image', `url(${avatar.getData()})`);
+         }
+
+         delete vCardData.PHOTO;
+         let result = convertToTemplateData(vCardData);
+         return resolve(result);
+       }).catch(() => {
+
+         if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
+            return reject({});
+         }
+
+         delete vCardData.PHOTO;
+         let result = convertToTemplateData(vCardData);
+         return resolve(result);
+      });
+   });
 }
 
 function vcardErrorCallback() {
