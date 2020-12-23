@@ -53,7 +53,7 @@ export default function(contact: IContact) {
    }
 
    contact.getVcard()
-      .then(vcardSuccessCallback)
+      .then(function(vcardData){vcardSuccessCallback(vcardData,contact);})
       .then(function(vcardData) {
          let content = vcardBodyTemplate({
             properties: vcardData
@@ -66,7 +66,7 @@ export default function(contact: IContact) {
       .catch(vcardErrorCallback);
 }
 
-function vcardSuccessCallback(vCardData): Promise<any> {
+function vcardSuccessCallback(vCardData,contact): Promise<any> {
    let dialogElement = dialog.getDom();
 
    if (vCardData.PHOTO) {
@@ -79,13 +79,41 @@ function vcardSuccessCallback(vCardData): Promise<any> {
 
    let numberOfProperties = Object.keys(vCardData).length;
 
-   if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
-      return Promise.reject({});
+   let disabledPlugins = contact.getAccount().getOption('disabledPlugins') || [];
+
+   if (disabledPlugins.indexOf('pep-avatars')>=0)
+   {
+      if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
+           return Promise.reject({});
+      }
+
+      delete vCardData.PHOTO;
+
+      return Promise.resolve(convertToTemplateData(vCardData));
    }
 
-   delete vCardData.PHOTO;
+   return new Promise(function(resolve, reject) {
+       contact.getAvatar().then(avatar => {
+         let imageElement = $('<div>');
+         imageElement.addClass('jsxc-avatar jsxc-vcard');
+         imageElement.css('background-image', `url(${avatar.getData()})`);
 
-   return Promise.resolve(convertToTemplateData(vCardData));
+         dialogElement.find('h3').before(imageElement);
+
+         delete vCardData.PHOTO;
+
+         return Promise.resolve(convertToTemplateData(vCardData));
+       }).catch(() => {
+
+        if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
+            return Promise.reject({});
+         }
+
+         delete vCardData.PHOTO;
+
+         return Promise.resolve(convertToTemplateData(vCardData));
+      });
+   });
 }
 
 function vcardErrorCallback() {
