@@ -8,14 +8,28 @@ import { IContact } from '../Contact.interface'
 import Translation from '../util/Translation'
 import Client from '@src/Client';
 import Log from '@util/Log'
+import Color from '../util/Color'
 
 let rosterItemTemplate = require('../../template/roster-item.hbs')
 
+const SHOW_TAGS = 'showTags';
+
 export default class RosterItem {
    private element: JQuery;
+   private static allgroups : string[];
+   private static allgroupscolors : string[];
 
    constructor(private contact: IContact) {
       let self = this;
+      if (!RosterItem.allgroups)
+      {
+          RosterItem.allgroups = []
+      }
+      if (!RosterItem.allgroupscolors)
+      {
+          RosterItem.allgroupscolors = []
+      }
+
       let template = rosterItemTemplate({
          jid: contact.getJid().bare,
          name: contact.getName(),
@@ -28,6 +42,21 @@ export default class RosterItem {
       this.element.attr('data-presence', Presence[this.contact.getPresence()]);
       this.element.attr('data-subscription', this.contact.getSubscription());
       this.element.attr('data-date', this.contact.getLastMessageDate()?.toISOString());
+
+      let groups = this.contact.getGroups();
+
+      if (Client.getOption(SHOW_TAGS,false)&&groups&&groups.length>0)
+      {
+          this.element.attr('data-groups', groups.join(';'));
+          this.element.find('.jsxc-bar-tags').empty().append(RosterItem.convertGroupsToHtml(groups));
+          this.element.find('.jsxc-bar-tags').css('display','');
+          this.element.find('.jsxc-bar__caption__secondary').css('display','none');
+      }
+      else
+      {
+          this.element.find('.jsxc-bar__caption__secondary').css('display','');
+          this.element.find('.jsxc-bar-tags').css('display','none');
+      }
 
       this.element.on('dragstart', (ev) => {
          (<any> ev.originalEvent).dataTransfer.setData('text/plain', contact.getJid().full);
@@ -132,13 +161,43 @@ export default class RosterItem {
          let unreadMessages = this.contact.getTranscript().getNumberOfUnreadMessages();
          if (unreadMessages > 0) {
             this.element.addClass('jsxc-bar--has-unread-msg');
+            if (Client.getOption(SHOW_TAGS,false))
+            {
+                this.element.find('.jsxc-avatar').addClass('jsxc-bar--has-unread-msg-blink');
+            }
          } else {
             this.element.removeClass('jsxc-bar--has-unread-msg');
+            if (Client.getOption(SHOW_TAGS,false))
+            {
+                this.element.find('.jsxc-avatar').removeClass('jsxc-bar--has-unread-msg-blink');
+            }
          }
       };
 
       this.contact.getTranscript().registerHook('unreadMessageIds', updateUnreadMessage);
       updateUnreadMessage();
+   }
+
+   public static convertGroupsToHtml(groups : string[]) : string
+   {
+       if (!groups)
+          return '';
+
+       let result=[];
+       let i=0
+       for (;i<groups.length;i++)
+       {
+           let indexgroup=RosterItem.allgroups.indexOf(groups[i]);
+           if (indexgroup===-1)
+           {
+               RosterItem.allgroups.push(groups[i]);
+               indexgroup=RosterItem.allgroups.length-1;
+               RosterItem.allgroupscolors.push(Color.generate(groups[i]));
+           }
+           let style='background-color: '+RosterItem.allgroupscolors[indexgroup]+';';
+           result.push('<span class="jsxc-bar-tags-item" style="'+style+'">'+groups[i]+'</span>');
+       }
+       return result.join("");
    }
 
    public getDom() {

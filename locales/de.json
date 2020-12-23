@@ -374,6 +374,7 @@
     "setting-vcard-avatar-enable": "vCard wird genutzt um Avatare der Kontakte zu laden.",
     "setting-ping-enable": "Antworte auf Ping Anfragen des Servers. Hilft in manchen Situationen bei einer unstabilen Verbindung.",
     "Test": "Test",
+    "no_groups": "keine Tags vorhanden",
     "this_device": "dieses Gerät",
     "Verification": "Verifikation",
     "Webcam": "Webcam",

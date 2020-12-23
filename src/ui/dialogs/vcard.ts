@@ -2,6 +2,8 @@ import Dialog from '../Dialog'
 import { IContact } from '../../Contact.interface'
 import Translation from '@util/Translation';
 import { Presence } from '@connection/AbstractConnection';
+import RosterItem from '../RosterItem';
+import Client from '../../Client';
 
 let vcardTemplate = require('../../../template/vcard.hbs');
 let vcardBodyTemplate = require('../../../template/vcard-body.hbs');
@@ -29,6 +31,18 @@ export default function(contact: IContact) {
 
    dialog = new Dialog(content);
    dialog.open();
+
+   if (Client.getOption('showTags',false)&&contact.data.get('type')!=='groupchat')
+   {
+      let groups = contact.getGroups()&&contact.getGroups().length>0?RosterItem.convertGroupsToHtml(contact.getGroups()):Translation.t('no_groups');
+      let tagselement = dialog.getDom().find('.jsxc-vcard-tags');
+      tagselement.append(groups);
+      dialog.getDom().find('.jsxc-vcard-tags').css('display','');
+   }
+   else
+   {
+      dialog.getDom().find('.jsxc-vcard-tags').css('display','none');
+   }
 
    for (let resource of resources) {
       let clientElement = dialog.getDom().find(`[data-resource="${resource}"] .jsxc-client`);

@@ -363,3 +363,29 @@ li.jsxc-hide-offline {
     }
   }
 }
+
+.jsxc-bar-tags {
+  line-height: 12px;
+}
+
+.jsxc-bar-tags-item {
+  color: #fff;
+  font-size: 10px;
+  margin: 0px 3px 0px 0px;
+  padding: 2px;
+}
+
+.jsxc-bar-tags-item:hover {
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-all;
+  z-index:99;
+}
+
+.jsxc-bar--has-unread-msg-blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}
