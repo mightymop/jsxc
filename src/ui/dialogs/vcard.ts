@@ -93,6 +93,19 @@ function vcardSuccessCallback(vCardData,contact): Promise<any> {
 
    let numberOfProperties = Object.keys(vCardData).length;
 
+   let disabledPlugins = contact.getAccount().getOption('disabledPlugins') || [];
+
+   if (disabledPlugins.indexOf('pep-avatars')>=0)
+   {
+      if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
+           return Promise.reject({});
+      }
+
+      delete vCardData.PHOTO;
+
+      return Promise.resolve(convertToTemplateData(vCardData));
+   }
+
    return new Promise(function(resolve, reject) {
        contact.getAvatar().then(avatar => {
          let imageElement = $('<div>');

@@ -167,17 +167,13 @@ export default class AvatarPEPPlugin extends AbstractPlugin {
 
    public static setAvatar(connection: IConnection, id: string, data: string, height: string, width: string, mimetype: string, size: string) {
 
-      let item = $build('item', {
-         "id": id
-      }).c('metadata',{xmlns:'urn:xmpp:avatar:metadata'}).c('info',{"bytes":size,"id":id,"height":height,"width":width,"type":mimetype}).tree();
+      let item = $build('metadata',{xmlns:'urn:xmpp:avatar:metadata'}).c('info',{"bytes":size,"id":id,"height":height,"width":width,"type":mimetype}).tree();
 
-      return connection.getPEPService().publishWithoutItem('urn:xmpp:avatar:metadata',item).then(function(result) {
+      return connection.getPEPService().publish('urn:xmpp:avatar:metadata',item,'urn:xmpp:avatar:metadata').then(function(result) {
 
-      let itemdata = $build('item', {
-         "id": id
-        }).c('data',{xmlns:'urn:xmpp:avatar:data'}).t(data).tree();
+      let itemdata = $build('data',{xmlns:'urn:xmpp:avatar:data'}).t(data).tree();
 
-           return connection.getPEPService().publishWithoutItem('urn:xmpp:avatar:data',itemdata).then(function(result) {
+           return connection.getPEPService().publish('urn:xmpp:avatar:data',itemdata,'urn:xmpp:avatar:data').then(function(result) {
 
          return new Promise(function(resolve, reject) {
              resolve(true);
@@ -193,9 +189,9 @@ export default class AvatarPEPPlugin extends AbstractPlugin {
 
    public static removeAvatar(connection: IConnection) {
 
-      let item = $build('item').c('metadata',{xmlns:'urn:xmpp:avatar:metadata'});
+      let item = $build('metadata',{xmlns:'urn:xmpp:avatar:metadata'});
 
-      return connection.getPEPService().publishWithoutItem('urn:xmpp:avatar:metadata',item.tree()).then(function(result) {
+      return connection.getPEPService().publish('urn:xmpp:avatar:metadata',item.tree(),'urn:xmpp:avatar:metadata').then(function(result) {
          return new Promise(function(resolve, reject) {
              resolve(true);
          });

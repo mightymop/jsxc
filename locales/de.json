@@ -381,6 +381,8 @@
     "setting-receipts-enable": "Wenn dieses Plugin aktiviert ist und der Empfänger diese Erweiterung ebenfalls unterstützt, werden Empfangsbenachrichtigungen ausgetauscht.",
     "setting-vcard-avatar-enable": "vCard wird genutzt um Avatare der Kontakte zu laden.",
     "setting-pep-avatar-enable" : "Unterstützung von PEP basierten Avataren",
+    "no_avatar": "Kein Avatar verfügbar",
+    "xep84disabled": "Plugin für XEP 84 deaktiviert",
     "Add_PEPAvatar" : "Avatar setzen",
     "setting-ping-enable": "Antworte auf Ping Anfragen des Servers. Hilft in manchen Situationen bei einer unstabilen Verbindung.",
     "Test": "Test",

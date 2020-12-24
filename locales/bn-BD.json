@@ -381,6 +381,8 @@
     "setting-receipts-enable": null,
     "setting-vcard-avatar-enable": null,
     "setting-pep-avatar-enable" : null,
+    "no_avatar": null,
+    "xep84disabled": null,
     "Add_PEPAvatar" : null,
     "setting-ping-enable": null,
     "Test": null,
