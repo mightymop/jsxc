@@ -87,15 +87,15 @@ export default class Roster {
    
    private initCollapisible()
    {
-       var coll = $(".jsxc-collapsible");
-      var i;
+      let coll = $(".jsxc-collapsible");
+      let i;
 
       for (i = 0; i < coll.length; i++) 
       {
           $(coll[i]).off("click").on("click", function() 
          {
             this.classList.toggle("jsxc-active");
-            var content = $(this).next();
+            let content = $(this).next();
             if ($(content)[0].style.maxHeight){
               $(content)[0].style.maxHeight = null;
               $(content)[0].style.display="none";
@@ -131,7 +131,7 @@ export default class Roster {
              $(this).css({"display":""});
          });
          
-         var val = null;
+         let val = null;
          
          if ($(this).val())
             val = new String($(this).val());
@@ -141,7 +141,7 @@ export default class Roster {
             val=val.toLowerCase();
             $.each( $(".jsxc-contact-list").children("li"), function( key, value )
             {
-               var text = $(this).children("div.jsxc-bar__caption.jsxc-grow").text().trim().toLowerCase();
+               let text = $(this).children("div.jsxc-bar__caption.jsxc-grow").text().trim().toLowerCase();
                if (text.indexOf(val)==-1&&$(this).attr("data-id").substring(0,$(this).attr("data-id").indexOf("@")).toLowerCase().indexOf(val)==-1)
                {
                   $(this).css({"display":"none"});
@@ -149,7 +149,7 @@ export default class Roster {
             });
             $.each( $(".jsxc-group-list").children("li"), function( key, value )
             {
-               var text = $(this).children("div.jsxc-bar__caption.jsxc-grow").text().trim().toLowerCase();
+               let text = $(this).children("div.jsxc-bar__caption.jsxc-grow").text().trim().toLowerCase();
                if (text.indexOf(val)==-1&&$(this).attr("data-id").substring(0,$(this).attr("data-id").indexOf("@")).toLowerCase().indexOf(val)==-1)
                {
                   $(this).css({"display":"none"});
@@ -384,14 +384,12 @@ export default class Roster {
    }
 
    private insert(rosterItem: RosterItem) {
-     let contact = rosterItem.getContact();
-     let contactType = contact.getType();
+      let contact = rosterItem.getContact();
+      let contactType = contact.getType();
       let list = contactType=="chat"?this.contactList:this.groupList;
-      
       let contactName = contact.getName();
 
       let lastMessageDate = contact.getLastMessageDate();
-
       let pointer = lastMessageDate ? list.find('[data-date]') : list.children().first();
       pointer = pointer.length > 0 ? pointer.first() : list.children().first();
 
@@ -412,20 +410,21 @@ export default class Roster {
       }
 
       rosterItem.getDom().appendTo(list);
-    
-     if (!$($(list).parent()[0]).prev().hasClass("jsxc-active"))
-     {
-        $(list).parent()[0].style.maxHeight = null;
-        $(list).parent()[0].style.display="none";
-     }
-     else 
-     {
-        if ($($(list).parent()[0]).prev().hasClass("jsxc-active"))
-        {
-          $(list).parent()[0].style.display="";
-          $(list).parent()[0].style.maxHeight = $(list).parent()[0].scrollHeight + "px";          
-        }
-     } 
+
+      if (!$($(list).parent()[0]).prev().hasClass("jsxc-active"))
+      {
+         $(list).parent()[0].style.maxHeight = null;
+         $(list).parent()[0].style.display="none";
+      }
+      else
+      {
+         if ($($(list).parent()[0]).prev().hasClass("jsxc-active"))
+         {
+            $(list).parent()[0].style.display="";
+            $(list).parent()[0].style.maxHeight = $(list).parent()[0].scrollHeight + "px";
+         }
+      }
+
    }
 
    private addMainMenuEntries() {
