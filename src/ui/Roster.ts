@@ -9,6 +9,7 @@ import { IContact } from '../Contact.interface'
 import WindowList from './ChatWindowList'
 import Client from '../Client'
 import Translation from '../util/Translation'
+import showSetExStatusDialog from './dialogs/exstatus'
 import { Notice, TYPE } from '../Notice'
 import { Presence } from '../connection/AbstractConnection'
 import { NoticeManager } from '../NoticeManager'
@@ -359,19 +360,26 @@ export default class Roster {
    private registerPresenceHandler() {
       this.element.find('.jsxc-js-presence-menu li').click(function() {
          let presenceString = <string> $(this).data('presence');
-         let oldPresence = Client.getPresenceController().getTargetPresence();
-         let requestedPresence = Presence[presenceString];
-
-         if (Client.getAccountManager().getAccount()) {
-            Client.getPresenceController().setTargetPresence(requestedPresence);
+         if (presenceString==='extended-status')
+         {
+            showSetExStatusDialog();
          }
+         else
+         {
+             let oldPresence = Client.getPresenceController().getTargetPresence();
+             let requestedPresence = Presence[presenceString];
 
-         if (oldPresence === Presence.offline && requestedPresence === Presence.online) {
-            let onUserRequestsToGoOnline = Client.getOption('onUserRequestsToGoOnline');
+             if (Client.getAccountManager().getAccount()) {
+                Client.getPresenceController().setTargetPresence(requestedPresence);
+             }
 
-            if (typeof onUserRequestsToGoOnline === 'function') {
-               onUserRequestsToGoOnline();
-            }
+             if (oldPresence === Presence.offline && requestedPresence === Presence.online) {
+                let onUserRequestsToGoOnline = Client.getOption('onUserRequestsToGoOnline');
+
+                if (typeof onUserRequestsToGoOnline === 'function') {
+                   onUserRequestsToGoOnline();
+                }
+             }
          }
       });
    }
