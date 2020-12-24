@@ -37,7 +37,7 @@ export interface IConnection {
 
    sendMessage(message: Message)
 
-   sendPresence(presence?: Presence)
+   sendPresence(presence?: Presence, statustext?:string)
 
    queryArchive(archive: IJID, version: string, queryId: string, contact?: IJID, beforeResultId?: string, end?: Date): Promise<Element>
 
