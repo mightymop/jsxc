@@ -379,6 +379,8 @@
     "setting-otr-enable": null,
     "setting-receipts-enable": null,
     "setting-vcard-avatar-enable": null,
+    "setting-pep-avatar-enable" : null,
+    "Add_PEPAvatar" : null,
     "setting-ping-enable": null,
     "Test": null,
     "no_groups": null,
