@@ -32,7 +32,7 @@ export default function(contact: IContact) {
    dialog = new Dialog(content);
    dialog.open();
 
-   if (Client.getOption('showTags',false)&&contact.data.get('type')!=='groupchat')
+   if (Client.getOption('showTags',false))
    {
       let groups = contact.getGroups()&&contact.getGroups().length>0?RosterItem.convertGroupsToHtml(contact.getGroups()):Translation.t('no_groups');
       let tagselement = dialog.getDom().find('.jsxc-vcard-tags');
