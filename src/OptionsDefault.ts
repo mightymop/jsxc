@@ -22,6 +22,9 @@ export let autoLang = true;
 /** Place for roster */
 export let rosterAppend = 'body';
 
+/** Show Group Tags in RosterItems instead of last Message */
+export let showTags = false;
+
 /** Default visibility of roster */
 export let rosterVisibility = SHOWN;
 

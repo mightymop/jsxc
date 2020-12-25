@@ -5,6 +5,7 @@ import Log from '../util/Log'
 import { Strophe, $iq, $msg, $pres } from '../vendor/Strophe'
 import Account from '../Account'
 import PEPService from './services/PEP'
+import SearchService from './services/Search'
 import PubSubService from './services/PubSub'
 import MUCService from './services/MUC'
 import RosterService from './services/Roster'
@@ -21,7 +22,8 @@ enum Presence {
    away,
    xa,
    dnd,
-   offline
+   offline,
+   statustext
 }
 
 abstract class AbstractConnection {
@@ -59,6 +61,10 @@ abstract class AbstractConnection {
 
    public getPEPService = (): PEPService => {
       return this.getService('pep', PEPService);
+   }
+
+   public getSearchService = (): SearchService => {
+      return this.getService('search', SearchService);
    }
 
    public getMUCService = (): MUCService => {
@@ -177,13 +183,17 @@ abstract class AbstractConnection {
       }
    }
 
-   public sendPresence(presence?: Presence) {
+   public sendPresence(presence?: Presence, statustext?: string) {
       let presenceStanza = $pres();
 
       presenceStanza.c('c', this.generateCapsAttributes()).up();
 
       if (typeof presence !== 'undefined' && presence !== Presence.online) {
          presenceStanza.c('show').t(Presence[presence]).up();
+      }
+
+      if (typeof statustext !== 'undefined') {
+         presenceStanza.c('status').t(statustext);
       }
 
       // var priority = Options.get('priority');

@@ -2,6 +2,8 @@ import Dialog from '../Dialog'
 import { IContact } from '../../Contact.interface'
 import Translation from '@util/Translation';
 import { Presence } from '@connection/AbstractConnection';
+import RosterItem from '../RosterItem';
+import Client from '../../Client';
 
 let vcardTemplate = require('../../../template/vcard.hbs');
 let vcardBodyTemplate = require('../../../template/vcard-body.hbs');
@@ -30,6 +32,18 @@ export default function(contact: IContact) {
    dialog = new Dialog(content);
    dialog.open();
 
+   if (Client.getOption('showTags',false))
+   {
+      let groups = contact.getGroups()&&contact.getGroups().length>0?RosterItem.convertGroupsToHtml(contact.getGroups()):Translation.t('no_groups');
+      let tagselement = dialog.getDom().find('.jsxc-vcard-tags');
+      tagselement.append(groups);
+      dialog.getDom().find('.jsxc-vcard-tags').css('display','');
+   }
+   else
+   {
+      dialog.getDom().find('.jsxc-vcard-tags').css('display','none');
+   }
+
    for (let resource of resources) {
       let clientElement = dialog.getDom().find(`[data-resource="${resource}"] .jsxc-client`);
 
@@ -53,7 +67,7 @@ export default function(contact: IContact) {
    }
 
    contact.getVcard()
-      .then(vcardSuccessCallback)
+      .then(function(vcardData){vcardSuccessCallback(vcardData,contact);})
       .then(function(vcardData) {
          let content = vcardBodyTemplate({
             properties: vcardData
@@ -66,7 +80,7 @@ export default function(contact: IContact) {
       .catch(vcardErrorCallback);
 }
 
-function vcardSuccessCallback(vCardData): Promise<any> {
+function vcardSuccessCallback(vCardData,contact): Promise<any> {
    let dialogElement = dialog.getDom();
 
    if (vCardData.PHOTO) {
@@ -79,13 +93,41 @@ function vcardSuccessCallback(vCardData): Promise<any> {
 
    let numberOfProperties = Object.keys(vCardData).length;
 
-   if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
-      return Promise.reject({});
+   let disabledPlugins = contact.getAccount().getOption('disabledPlugins') || [];
+
+   if (disabledPlugins.indexOf('pep-avatars')>=0)
+   {
+      if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
+           return Promise.reject({});
+      }
+
+      delete vCardData.PHOTO;
+
+      return Promise.resolve(convertToTemplateData(vCardData));
    }
 
-   delete vCardData.PHOTO;
+   return new Promise(function(resolve, reject) {
+       contact.getAvatar().then(avatar => {
+         let imageElement = $('<div>');
+         imageElement.addClass('jsxc-avatar jsxc-vcard');
+         imageElement.css('background-image', `url(${avatar.getData()})`);
 
-   return Promise.resolve(convertToTemplateData(vCardData));
+         dialogElement.find('h3').before(imageElement);
+
+         delete vCardData.PHOTO;
+
+         return Promise.resolve(convertToTemplateData(vCardData));
+       }).catch(() => {
+
+        if (numberOfProperties === 0 || (numberOfProperties === 1 && vCardData.PHOTO)) {
+            return Promise.reject({});
+         }
+
+         delete vCardData.PHOTO;
+
+         return Promise.resolve(convertToTemplateData(vCardData));
+      });
+   });
 }
 
 function vcardErrorCallback() {

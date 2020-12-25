@@ -3,6 +3,7 @@ import Message from './../Message'
 import { Presence } from './AbstractConnection'
 import Form from './Form'
 import PEPService from './services/PEP'
+import SearchService from './services/Search'
 import PubSubService from './services/PubSub'
 import 'Strophe'
 import JingleHandler from './JingleHandler';
@@ -26,6 +27,8 @@ export interface IConnection {
 
    getVcardService(): IVcardService
 
+   getSearchService(): SearchService
+
    getDiscoService(): IDiscoService
 
    getJingleHandler(): JingleHandler
@@ -34,7 +37,7 @@ export interface IConnection {
 
    sendMessage(message: Message)
 
-   sendPresence(presence?: Presence)
+   sendPresence(presence?: Presence, statustext?:string)
 
    queryArchive(archive: IJID, version: string, queryId: string, contact?: IJID, beforeResultId?: string, end?: Date): Promise<Element>
 
@@ -53,6 +56,10 @@ export interface IMUCService {
    createInstantRoom(jid: IJID): Promise<Element>
 
    getRoomConfigurationForm(jid: IJID): Promise<Element>
+
+   getMemberlistMultiUserRoom(jid: IJID): Promise<Element>
+
+   setMemberlistMultiUserRoom(jid: IJID, items:Element[]): Promise<Element>
 
    submitRoomConfiguration(jid: IJID, form: Form): Promise<Element>
 
