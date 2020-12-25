@@ -6,6 +6,27 @@ import AvatarSet from './AvatarSet'
 import showRoomConfigurationDialog from './dialogs/multiUserRoomConfiguration'
 import showMultiUserInviteDialog from './dialogs/multiUserInvite'
 import showMultiUserMemberlistDialog from './dialogs/multiUserMemberlist'
+import showMucHelp from './dialogs/muchelp';
+
+enum Command
+{
+    admin,// Zugehörigkeit des Benutzers zu Administrator ändern - wird über UI geregelt
+    ban,// Sperren Sie Benutzer, indem Sie ihre Zugehörigkeit zu ausgeschlossenen Personen ändern
+    kick,// Kicken Sie Benutzer
+    clear,// Löschen des Chatbereichs  - wird über UI geregelt
+    deop,// Rolle zu Teilnehmer ändern
+    destroy,// Diesen Gruppenchat entfernen - wird über UI geregelt
+    help,// Dieses Menü anzeigen
+    me,// In der dritten Person schreiben - über extra Plugin
+    member,// Einem Benutzer die Mitgliedschaft gewähren  - wird über UI geregelt
+    nick,// Eigenen Spitznamen ändern
+    op,// Benutzer Moderatorenrechte gewähren
+    owner,// Besitzrechte an diesem Gruppenchat vergeben  - wird über UI geregelt
+    revoke,// Widerrufen der aktuellen Zugehörigkeit des Benutzers
+    subject,// Thema des Gruppenchats festlegen  - wird über UI geregelt
+    topic,// Gruppenchatthema (alias für /subject) festlegen  - wird über UI geregelt
+    invite,// Einen User einladen - wird über UI geregelt
+}
 
 export default class MultiUserChatWindow extends ChatWindow {
    private memberlistElement;
