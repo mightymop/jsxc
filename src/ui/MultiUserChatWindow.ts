@@ -6,6 +6,7 @@ import AvatarSet from './AvatarSet'
 import showRoomConfigurationDialog from './dialogs/multiUserRoomConfiguration'
 import showMultiUserInviteDialog from './dialogs/multiUserInvite'
 import showMultiUserMemberlistDialog from './dialogs/multiUserMemberlist'
+
 import showMucHelp from './dialogs/muchelp';
 
 enum Command
