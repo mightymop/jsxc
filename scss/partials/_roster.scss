@@ -363,3 +363,8 @@ li.jsxc-hide-offline {
     }
   }
 }
+
+.jsxc-rosteritem-disabled .jsxc-bar__caption__primary {
+  text-decoration: line-through;
+  color: var(--jsxc-color-error);
+}

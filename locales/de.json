@@ -41,6 +41,8 @@
     "Authentication": "Authentifizierung",
     "Message": "Nachricht",
     "Add_buddy": "Kontakt hinzufügen",
+    "Blocking_users": "Kontakte blockieren",
+    "muc_one_jid_per_line": "Eine JID pro Zeile",
     "rename_buddy": "Kontakt umbenennen",
     "delete_buddy": "Kontakt löschen",
     "Login": "Anmeldung",

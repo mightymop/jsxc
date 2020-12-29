@@ -40,6 +40,10 @@ export default class RosterItem {
       });
 
       this.element.click(function() {
+         if ($(this).hasClass('jsxc-rosteritem-disabled'))
+         {
+            return;
+         }
          let chatWindow = contact.getChatWindowController();
 
          if ($('body').hasClass('jsxc-fullscreen') || Client.isExtraSmallDevice()) {

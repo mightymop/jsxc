@@ -41,6 +41,8 @@
     "Authentication": null,
     "Message": null,
     "Add_buddy": null,
+    "Blocking_users": null,
+    "muc_one_jid_per_line": null,
     "rename_buddy": null,
     "delete_buddy": null,
     "Login": null,
