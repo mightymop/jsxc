@@ -37,8 +37,6 @@ export default class AvatarSet {
         let _self=this;
         this.contact.getAvatar().then((avatar) => {
 
-           //$(this.elements).each(function() {
-
                if (avatar.getJid()===_self.contact.getJid().bare)
                {
                    /*
@@ -48,7 +46,6 @@ export default class AvatarSet {
                    */
                    _self.setAvatar(avatar.getData().startsWith('data:')?avatar.getData():'data:' + avatar.getType() + ';base64,' + avatar.getData());
                }
-          // });
          }).catch((msg) => {
              AvatarSet.placeholder(this.elements, this.contact.getName(), this.contact.getJid());
          }).then(() => {
