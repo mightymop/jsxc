@@ -1,8 +1,8 @@
 import Dialog from '../Dialog'
 import AvatarPEPPlugin from '../../plugins/pepavatar/AvatarPEPPlugin'
 import Client from '../../Client'
-import JID from '../../JID'
 import * as sha1 from 'js-sha1'
+import Contact from '../../Contact'
 import Translation from '@util/Translation';
 
 let pepavatarTemplate = require('../../../template/pepavatar.hbs');
@@ -52,7 +52,7 @@ export default function() {
    });
    let account = Client.getAccountManager().getAccounts()[0];
    let contact = account.getContact();
-   let jid = contact.getJid().toString();
+
    contact.getAvatar().then((avatar) => {
       $('#jsxc-avatarimage').attr('src','data:' + avatar.getType() + ';base64,' + avatar.getData());
       $('#jsxc-avatarimage').css('display','');
@@ -64,7 +64,7 @@ export default function() {
       {
             let storage=AvatarPEPPlugin.getInstance().getStorage();
 
-            AvatarPEPPlugin.getAvatarFromPEP( account.getConnection(), new JID(jid),storage).then((avatar) => {
+            AvatarPEPPlugin.getAvatarFromPEP( account.getConnection(), (<Contact>contact),storage).then((avatar) => {
             let result = (<any>avatar);
             $('#jsxc-avatarimage').attr('src','data:' + result.type + ';base64,' + result.data);
             $('#jsxc-avatarimage').css('display','');

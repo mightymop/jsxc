@@ -6,7 +6,7 @@ import * as sha1 from 'js-sha1'
 export default class implements IAvatar {
    private properties: PersistentMap;
 
-   constructor(private sha1Hash: string, type?: string, data?: string) {
+   constructor(private sha1Hash: string, type?: string, data?: string, jid?:string) {
       let storage = Client.getStorage();
       this.properties = new PersistentMap(storage, sha1Hash);
 
@@ -20,10 +20,20 @@ export default class implements IAvatar {
 
             this.properties.set('data', data);
             this.properties.set('type', type);
+            this.properties.set('jid', jid);
          } else {
             throw new Error('Avatar not found');
          }
       }
+   }
+
+   public getJid(): string {
+      return this.properties.get('jid');
+   }
+
+   public setJid(jid:string)
+   {
+       this.properties.set('jid',jid);
    }
 
    public getData(): string {

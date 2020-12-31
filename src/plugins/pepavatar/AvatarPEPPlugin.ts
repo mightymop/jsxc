@@ -136,9 +136,9 @@ export default class AvatarPEPPlugin extends AbstractPlugin {
       let avatardata = storage.getItem(contact.getJid().bare);
 
       if (!avatardata || !avatar) {
-            return this.getAvatar(contact.getJid()).then((avatardata: any) => {
+            return this.getAvatar(contact).then((avatardata: any) => {
 
-                return [contact, new Avatar(avatardata.id, avatardata.type, avatardata.data)];
+                return [contact, new Avatar(avatardata.id, avatardata.type, avatardata.data,contact.getJid().bare)];
          }).catch((err) => {
             Log.warn('Error during avatar retrieval', err)
             return Promise.reject();
@@ -146,24 +146,34 @@ export default class AvatarPEPPlugin extends AbstractPlugin {
       }
 
       try {
-         avatar = new Avatar(avatardata.id,avatardata.type,avatardata.data);
+         avatar = new Avatar(avatardata.id,avatardata.type,avatardata.data,contact.getJid().bare);
       } catch (err) {
             Log.warn('Error during avatar retrieval', err)
             return Promise.reject();
       }
 
       return Promise.resolve([contact, avatar]);
+
    }
 
-   private getAvatar(jid: JID) {
-      let connection = this.pluginAPI.getConnection();
+   private getAvatar(contact: Contact) {
+      if (!AvatarPEPPlugin.getInstance().getStorage().getItem(contact.getJid().bare))
+      {
+          let connection = this.pluginAPI.getConnection();
 
-      return AvatarPEPPlugin.getAvatarFromPEP(connection,jid, this.getStorage());
+          return AvatarPEPPlugin.getAvatarFromPEP(connection,contact, this.getStorage());
+      }
+      else
+      {
+          return new Promise((resolve, reject) => {
+                resolve(AvatarPEPPlugin.getInstance().getStorage().getItem(contact.getJid().bare));
+          });
+      }
    }
 
-   public static getAvatarFromPEP(connection: IConnection,jid: JID, storage) {
+   public static getAvatarFromPEP(connection: IConnection,contact: Contact, storage) {
 
-      return connection.getPEPService().retrieveItems('urn:xmpp:avatar:metadata',jid.bare).then(function(meta) {
+      return connection.getPEPService().retrieveItems('urn:xmpp:avatar:metadata',contact.getJid().bare).then(function(meta) {
 
             let metadata = $(meta).find('metadata[xmlns="urn:xmpp:avatar:metadata"]');
 
@@ -176,20 +186,20 @@ export default class AvatarPEPPlugin extends AbstractPlugin {
                     let hash = $(info).attr('id');
                     if (hash&&hash.length > 0)
                     {
-                        storage.setItem(jid.bare, {id:hash,
+                        storage.setItem(contact.getJid().bare, {id:hash,
                                                       type:$(info).attr('type'),
                                                       width:$(info).attr('width'),
                                                       height:$(info).attr('height'),
                                                       bytes:$(info).attr('bytes'),
                                                       data:null});
 
-                        return connection.getPEPService().retrieveItems('urn:xmpp:avatar:data',jid.bare).then(function(data) {
+                        return connection.getPEPService().retrieveItems('urn:xmpp:avatar:data',contact.getJid().bare).then(function(data) {
                              return new Promise(function(resolve, reject) {
                                 if (data&&$(data).text()&&$(data).text().trim().length>0) {
-                                   let avatardata = storage.getItem(jid.bare);
+                                   let avatardata = storage.getItem(contact.getJid().bare);
                                    avatardata.data= $(data).text().replace(/[\t\r\n\f]/gi, '');
-                                   storage.setItem(jid.bare,avatardata);
-                                   resolve(avatardata);
+                                   storage.setItem(contact.getJid().bare,avatardata);
+                                   resolve([contact,avatardata]);
                                 } else {
                                    reject();
                                 }

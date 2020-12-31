@@ -86,9 +86,10 @@ export default class AvatarVCardPlugin extends AbstractPlugin {
 
       try {
          avatar = new Avatar(hash);
+         avatar.setJid(contact.getJid().bare);
       } catch (err) {
          return this.getAvatar(contact.getJid()).then((avatarObject) => {
-            return [contact, new Avatar(hash, avatarObject.type, avatarObject.src)];
+            return [contact, new Avatar(hash, avatarObject.type, avatarObject.src, contact.getJid().bare)];
          }).catch((err) => {
             Log.warn('Error during avatar retrieval', err)
 

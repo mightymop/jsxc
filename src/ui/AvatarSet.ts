@@ -34,15 +34,21 @@ export default class AvatarSet {
 
       if (this.contact.getType()!=='groupchat')
       {
+        let _self=this;
         this.contact.getAvatar().then((avatar) => {
-           $(this.elements).each(function() {
-              let element = $(this);
-              //old method call was buggy and sometimes the property was not set
-              //with background-size: contain; chrome does not complain about invalid property anymore!
-              let datauri=avatar.getData().startsWith('data:')?avatar.getData():'data:' + avatar.getType() + ';base64,' + avatar.getData();
-              element.attr('style','background: url(\'' + datauri + '\'); background-size: contain; background-repeat: no-repeat; background-position:center;');
-              element.text('');
-           });
+
+           //$(this.elements).each(function() {
+
+               if (avatar.getJid()===_self.contact.getJid().bare)
+               {
+                   /*
+                     Sometime a wrong Avatar was loaded.
+                     Needs some investigation on this.
+                     As a workaround, the Avatar class was extended with the jid as an id to compare with.
+                   */
+                   _self.setAvatar(avatar.getData().startsWith('data:')?avatar.getData():'data:' + avatar.getType() + ';base64,' + avatar.getData());
+               }
+          // });
          }).catch((msg) => {
              AvatarSet.placeholder(this.elements, this.contact.getName(), this.contact.getJid());
          }).then(() => {
@@ -57,11 +63,12 @@ export default class AvatarSet {
    }
 
    public setAvatar(dataurl) {
-      let element = $(this);
       //old method call was buggy and sometimes the property was not set
       //with background-size: contain; chrome does not complain about invalid property anymore!
-      element.attr('style','background: url(\'' + dataurl + '\'); background-size: contain; background-repeat: no-repeat; background-position:center;');
-      element.text('');
+	  $(this.elements).each(function() {
+			$(this).attr('style','background: url(\'' + dataurl + '\'); background-size: contain; background-repeat: no-repeat; background-position:center;');
+			$(this).text('');
+	  });
    }
 
    private constructor(private contact: IContact) {
